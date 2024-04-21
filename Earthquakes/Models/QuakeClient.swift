@@ -16,7 +16,7 @@ actor QuakeClient {
             let data = try await downloader.httpData(from: feedURL)
             let allQuakes = try decoder.decode(GeoJSON.self, from: data)
             var updatedQuakes = allQuakes.quakes
-            if let olderThanOneHour = updatedQuakes.firstIndex(where: { $0.time.timeIntervalSinceNow > 3600 }) {
+            if let olderThanOneHour = updatedQuakes.firstIndex(where: { abs($0.time.timeIntervalSinceNow) > 3600 }) {
                 let indexRange = updatedQuakes.startIndex ..< olderThanOneHour
                 try await withThrowingTaskGroup(of: (Int, QuakeLocation).self) { group in
                     for index in indexRange {
